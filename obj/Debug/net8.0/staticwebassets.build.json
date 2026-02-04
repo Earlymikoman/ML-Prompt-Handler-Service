@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "estXC+xa1jbMMNFBI87I1ZaICOUoEVRq4Z/qe/7yRRw=",
+  "Source": "azure-file-server",
+  "BasePath": "_content/azure-file-server",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
