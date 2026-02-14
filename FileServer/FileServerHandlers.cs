@@ -176,10 +176,33 @@ public class FileServerHandlers
                 m.userid = GetParameterFromList("userid", request, log);
                 m.filename = GetParameterFromList("filename", request, log);
 
+                log.SetAttribute("request.filename", m.filename);
+
                 // TODO: Implement the download file delegate to return the file
                 // contents to the caller via the HTTP response after receiving both
                 // the userId and the filename to find.
+
+                //If this fails, should throw a UserErrorException FileNotFound (404)
+                m = await _cosmosDbWrapper.GetItemAsync<FileMetadata>(m.id, m.userid);
+
+                // Now we write the file into a blob storage element within the container.
+                // We will use one container per user to keep things organized.
+                var blobStorage = new BlobStorageWrapper(_configuration);
+                await blobStorage.DownloadBlob(m.userid, m.filename, request.Body);
+                request.ContentType = m.contenttype;
+                request.ContentLength = m.contentlength;
+
+                log.SetAttribute("request.contenttype", request.ContentType);
+                log.SetAttribute("request.contentlength", request.ContentLength);
+
+                // The POST has no response body, so we just return and the system
+                // will return a 200 OK to the caller.
+
                 throw new NotImplementedException();
+            }
+            catch (UserErrorException e)
+            {
+                log.LogUserError(e.Message);
             }
             catch(Exception e)
             {
