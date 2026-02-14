@@ -231,12 +231,12 @@ public class FileServerHandlers
                 HttpResponse response = context.Response;
                 IEnumerable<FileMetadata> metadatas = await _cosmosDbWrapper.GetItemsAsync<FileMetadata>(m.userid);
                 
-                //string fileStrings = "";
-                //foreach (FileMetadata metadata in metadatas)
-                //{
-                //    fileStrings += metadata.ToString() + "\n";
-                //}
-                //response.StatusCode = 200;
+                string fileStrings = "";
+                foreach (FileMetadata metadata in metadatas)
+                {
+                    fileStrings += metadata.ToString() + "\n";
+                }
+                response.StatusCode = 200;
                 //response.ContentLength = Encoding.UTF8.GetByteCount(fileStrings);
                 //response.ContentType = "text/plain; charset=utf-8";
 
