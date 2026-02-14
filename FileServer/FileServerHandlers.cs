@@ -229,7 +229,7 @@ public class FileServerHandlers
                 // TODO: Implement the list files delegate to return a list of files
                 // that are associated with the userId provided in the HTTP request.
                 HttpResponse response = context.Response;
-                IEnumerable<FileMetadata> metadatas = await _cosmosDbWrapper.GetItemsAsync<FileMetadata>(m.id);
+                IEnumerable<FileMetadata> metadatas = await _cosmosDbWrapper.GetItemsAsync<FileMetadata>(m.userid);
                 
                 string fileStrings = "";
                 foreach (FileMetadata metadata in metadatas)
