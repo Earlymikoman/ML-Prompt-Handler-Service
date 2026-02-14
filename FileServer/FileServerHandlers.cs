@@ -236,15 +236,15 @@ public class FileServerHandlers
                 {
                     fileStrings += metadata.ToString() + "\n";
                 }
-                response.StatusCode = 200;
-                response.ContentLength = Encoding.UTF8.GetByteCount(fileStrings);
-                response.ContentType = "text/plain; charset=utf-8";
+                //response.StatusCode = 200;
+                //response.ContentLength = Encoding.UTF8.GetByteCount(fileStrings);
+                //response.ContentType = "text/plain; charset=utf-8";
 
-                await using (var bodyWriter = new StreamWriter(response.Body, leaveOpen: true))
-                {
-                    await bodyWriter.WriteAsync(fileStrings);
-                    await bodyWriter.FlushAsync();
-                }
+                //await using (var bodyWriter = new StreamWriter(response.Body, leaveOpen: true))
+                //{
+                //    await bodyWriter.WriteAsync(fileStrings);
+                //   await bodyWriter.FlushAsync();
+                //}
             }
             catch(Exception e)
             {
