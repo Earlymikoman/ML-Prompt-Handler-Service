@@ -230,6 +230,10 @@ public class FileServerHandlers
                 // that are associated with the userId provided in the HTTP request.
                 HttpResponse response = context.Response;
                 IEnumerable<FileMetadata> metadatas = await _cosmosDbWrapper.GetItemsAsync<FileMetadata>(m.userid);
+                if (metadatas == null)
+                {
+                    throw new UserErrorException();
+                }
                 
                 string fileStrings = "";
                 foreach (FileMetadata metadata in metadatas)
