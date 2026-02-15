@@ -283,7 +283,7 @@ public class FileServerHandlers
                 // TODO: Implement the delete file delegate to remove the file
                 // from the storage system and the metadata from the CosmosDB database.
                 //Failure to find the file to be deleted will be logged, but not considered a failure state.
-                //I don't know what would cause "Terminal Failure" to show, but I know it would indeed be terminal.
+                //I don't know what would cause "Terminal Failure" to show, but I know it would indeed be terminal, so that's what the default value gets to be.
                 string deletionStatus = "Terminal Failure";
                 //We swap to using the found metadata from here so as to make sure the names are properly synced (capitalization)
                 m = await _cosmosDbWrapper.GetItemAsync<FileMetadata>(m.id, m.userid);
