@@ -12,17 +12,17 @@ USER appuser
 FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG configuration=Release
 WORKDIR /src
-COPY ["mr-xometry-job-handler.csproj", "./"]
-RUN dotnet restore "mr-xometry-job-handler.csproj"
+COPY ["azure-file-server.csproj", "./"]
+RUN dotnet restore "azure-file-server.csproj"
 COPY . .
 WORKDIR "/src/."
-RUN dotnet build "mr-xometry-job-handler.csproj" -c $configuration -o /app/build
+RUN dotnet build "azure-file-server.csproj" -c $configuration -o /app/build
 
 FROM build AS publish
 ARG configuration=Release
-RUN dotnet publish "mr-xometry-job-handler.csproj" -c $configuration -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "azure-file-server.csproj" -c $configuration -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "mr-xometry-job-handler.dll"]
+ENTRYPOINT ["dotnet", "azure-file-server.dll"]
