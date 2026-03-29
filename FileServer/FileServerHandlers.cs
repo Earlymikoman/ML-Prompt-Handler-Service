@@ -8,17 +8,17 @@ using System.Security.Cryptography;
 
 namespace AzureFileServer.FileServer;
 
-string QuickHash(string input)
-{
-    var inputBytes = Encoding.UTF8.GetBytes(input);
-    var inputHash = SHA256.HashData(inputBytes);
-    return Convert.ToHexString(inputHash);
-}
-
 // This is the core logic of the web server and hosts all of the HTTP
 // handlers used by the web server regarding File Server functionality.
 public class FileServerHandlers
 {
+    string QuickHash(string input)
+    {
+        var inputBytes = Encoding.UTF8.GetBytes(input);
+        var inputHash = SHA256.HashData(inputBytes);
+        return Convert.ToHexString(inputHash);
+    }
+
     private readonly IConfiguration _configuration;
     private readonly Logger _logger;
     private readonly CosmosDbWrapper _cosmosDbWrapper;
