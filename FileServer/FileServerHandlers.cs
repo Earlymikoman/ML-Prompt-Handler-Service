@@ -188,7 +188,7 @@ public class FileServerHandlers
 
                 PromptMetadata m = new PromptMetadata();
                 m.prompttype = GetParameterFromList("prompttype", request, log);
-                m.promptname = GetParameterFromList("filename", request, log);
+                m.promptname = GetParameterFromList("promptname", request, log);
 
                 m.promptname = Path.ChangeExtension(Path.GetFileNameWithoutExtension(m.promptname), Path.GetExtension(m.promptname).ToLowerInvariant());
 
@@ -196,7 +196,7 @@ public class FileServerHandlers
 
                 // TODO: Implement the download file delegate to return the file
                 // contents to the caller via the HTTP response after receiving both
-                // the prompttype and the filename to find.
+                // the prompttype and the promptname to find.
 
                 HttpResponse response = context.Response;
                 //If this fails, should throw a UserErrorException FileNotFound (404)
@@ -211,7 +211,7 @@ public class FileServerHandlers
                 //Went with actual download because uploadfile seems to deal in actual files, so downloadfile should too.
                 //Full disclosure, this line in particular is just AI (Grok); I asked it how to download a file
                 //via http rather than just print the response, and this was the result.
-                response.Headers.Append("Content-Disposition", $"attachment; filename=\"{Path.GetFileName(m.promptname)}\"");
+                response.Headers.Append("Content-Disposition", $"attachment; promptname=\"{Path.GetFileName(m.promptname)}\"");
 
                 var blobStorage = new BlobStorageWrapper(_configuration);
                 await blobStorage.DownloadBlob(m.prompttype, m.promptname, response.Body);
@@ -292,7 +292,7 @@ public class FileServerHandlers
 
                 PromptMetadata m = new PromptMetadata();
                 m.prompttype = GetParameterFromList("prompttype", request, log);
-                m.promptname = GetParameterFromList("filename", request, log);
+                m.promptname = GetParameterFromList("promptname", request, log);
 
                 m.promptname = Path.ChangeExtension(Path.GetFileNameWithoutExtension(m.promptname), Path.GetExtension(m.promptname).ToLowerInvariant());
 
