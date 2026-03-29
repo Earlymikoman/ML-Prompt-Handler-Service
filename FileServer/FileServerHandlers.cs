@@ -147,9 +147,9 @@ public class FileServerHandlers
                 // First step is we will write the metadata to CosmosDB
                 // Here we are using Type mapping to convert our data structure
                 // to a JSON document that can be stored in CosmosDB.
-                if (await _cosmosDbWrapper.GetItemAsync<PromptMetadata>(m.promptname, m.prompttype) != null)
+                if (await _cosmosDbWrapper.GetItemAsync<PromptMetadata>(m.id, m.prompttype) != null)
                 {
-                    await _cosmosDbWrapper.UpdateItemAsync(m.promptname, m.prompttype, m);
+                    await _cosmosDbWrapper.UpdateItemAsync(m.id, m.prompttype, m);
                 }
                 else
                 {
@@ -200,7 +200,7 @@ public class FileServerHandlers
 
                 HttpResponse response = context.Response;
                 //If this fails, should throw a UserErrorException FileNotFound (404)
-                m = await _cosmosDbWrapper.GetItemAsync<PromptMetadata>(m.promptname, m.prompttype);
+                m = await _cosmosDbWrapper.GetItemAsync<PromptMetadata>(m.id, m.prompttype);
                 if (m == null)
                 {
                     throw new UserErrorException();
@@ -301,9 +301,9 @@ public class FileServerHandlers
                 //Failure to find the file to be deleted will be logged, but not considered a failure state.
                 //I don't know what would cause "Terminal Failure" to show, but I know it would indeed be terminal, so that's what the default value gets to be.
                 string deletionStatus = "Terminal Failure";
-                if (await _cosmosDbWrapper.GetItemAsync<PromptMetadata>(m.promptname, m.prompttype) != null)
+                if (await _cosmosDbWrapper.GetItemAsync<PromptMetadata>(m.id, m.prompttype) != null)
                 {
-                    await _cosmosDbWrapper.DeleteItemAsync(m.promptname, m.prompttype);
+                    await _cosmosDbWrapper.DeleteItemAsync(m.id, m.prompttype);
                     deletionStatus = "File Found And Deleted";
                 }
                 else
