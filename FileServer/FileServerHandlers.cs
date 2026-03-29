@@ -137,7 +137,7 @@ public class FileServerHandlers
                 m.contenttype = fileContent.ContentType;
                 m.contentlength = fileContent.Length;
 
-                //m.filename = Path.ChangeExtension(Path.GetFileNameWithoutExtension(m.filename), Path.GetExtension(m.filename).ToLowerInvariant());
+                //m.promptname = Path.ChangeExtension(Path.GetFileNameWithoutExtension(m.promptname), Path.GetExtension(m.promptname).ToLowerInvariant());
                 m.promptname = Path.GetFileNameWithoutExtension(m.promptname).ToLowerInvariant();
 
                 log.SetAttribute("request.promptname", m.promptname);
@@ -188,11 +188,11 @@ public class FileServerHandlers
 
                 PromptMetadata m = new PromptMetadata();
                 m.prompttype = GetParameterFromList("prompttype", request, log);
-                m.filename = GetParameterFromList("filename", request, log);
+                m.promptname = GetParameterFromList("filename", request, log);
 
-                m.filename = Path.ChangeExtension(Path.GetFileNameWithoutExtension(m.filename), Path.GetExtension(m.filename).ToLowerInvariant());
+                m.promptname = Path.ChangeExtension(Path.GetFileNameWithoutExtension(m.promptname), Path.GetExtension(m.promptname).ToLowerInvariant());
 
-                log.SetAttribute("request.filename", m.filename);
+                log.SetAttribute("request.promptname", m.promptname);
 
                 // TODO: Implement the download file delegate to return the file
                 // contents to the caller via the HTTP response after receiving both
@@ -211,10 +211,10 @@ public class FileServerHandlers
                 //Went with actual download because uploadfile seems to deal in actual files, so downloadfile should too.
                 //Full disclosure, this line in particular is just AI (Grok); I asked it how to download a file
                 //via http rather than just print the response, and this was the result.
-                response.Headers.Append("Content-Disposition", $"attachment; filename=\"{Path.GetFileName(m.filename)}\"");
+                response.Headers.Append("Content-Disposition", $"attachment; filename=\"{Path.GetFileName(m.promptname)}\"");
 
                 var blobStorage = new BlobStorageWrapper(_configuration);
-                await blobStorage.DownloadBlob(m.prompttype, m.filename, response.Body);
+                await blobStorage.DownloadBlob(m.prompttype, m.promptname, response.Body);
 
                 log.SetAttribute("response.contenttype", response.ContentType);
                 log.SetAttribute("response.contentlength", response.ContentLength);
@@ -292,9 +292,9 @@ public class FileServerHandlers
 
                 PromptMetadata m = new PromptMetadata();
                 m.prompttype = GetParameterFromList("prompttype", request, log);
-                m.filename = GetParameterFromList("filename", request, log);
+                m.promptname = GetParameterFromList("filename", request, log);
 
-                m.filename = Path.ChangeExtension(Path.GetFileNameWithoutExtension(m.filename), Path.GetExtension(m.filename).ToLowerInvariant());
+                m.promptname = Path.ChangeExtension(Path.GetFileNameWithoutExtension(m.promptname), Path.GetExtension(m.promptname).ToLowerInvariant());
 
                 // TODO: Implement the delete file delegate to remove the file
                 // from the storage system and the metadata from the CosmosDB database.
@@ -314,16 +314,16 @@ public class FileServerHandlers
                 log.SetAttribute("deletion.status", deletionStatus);
 
                 var blobStorage = new BlobStorageWrapper(_configuration);
-                await blobStorage.DeleteBlob(m.prompttype, m.filename);
+                await blobStorage.DeleteBlob(m.prompttype, m.promptname);
 
                 HttpResponse response = context.Response;
                 response.StatusCode = 200;
-                response.ContentLength = Encoding.UTF8.GetByteCount(deletionStatus + ": " + m.filename);
+                response.ContentLength = Encoding.UTF8.GetByteCount(deletionStatus + ": " + m.promptname);
                 response.ContentType = "text/plain; charset=utf-8";
 
                 await using (var bodyWriter = new StreamWriter(response.Body, leaveOpen: true))
                 {
-                    await bodyWriter.WriteAsync(deletionStatus + ": " + m.filename);
+                    await bodyWriter.WriteAsync(deletionStatus + ": " + m.promptname);
                     await bodyWriter.FlushAsync();
                 }
             }
