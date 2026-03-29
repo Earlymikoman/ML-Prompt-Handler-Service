@@ -176,9 +176,9 @@ public class FileServerHandlers
         }
     }
 
-    public async Task DownloadPromptDelegate(HttpContext context)
+    public async Task GetPromptDelegate(HttpContext context)
     {
-        using (var log = _logger.StartMethod(nameof(DownloadPromptDelegate), context))
+        using (var log = _logger.StartMethod(nameof(GetPromptDelegate), context))
         {
             try
             {
