@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/home/earlymikoman/assignment-6-azure-file-server-Earlymikoman/azure-file-server.csproj": {}
+    "/home/earlymikoman/ML-Prompt-Handler-Service/azure-file-server.csproj": {}
   },
   "projects": {
-    "/home/earlymikoman/assignment-6-azure-file-server-Earlymikoman/azure-file-server.csproj": {
+    "/home/earlymikoman/ML-Prompt-Handler-Service/azure-file-server.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/earlymikoman/assignment-6-azure-file-server-Earlymikoman/azure-file-server.csproj",
+        "projectUniqueName": "/home/earlymikoman/ML-Prompt-Handler-Service/azure-file-server.csproj",
         "projectName": "azure-file-server",
-        "projectPath": "/home/earlymikoman/assignment-6-azure-file-server-Earlymikoman/azure-file-server.csproj",
+        "projectPath": "/home/earlymikoman/ML-Prompt-Handler-Service/azure-file-server.csproj",
         "packagesPath": "/home/earlymikoman/.nuget/packages/",
-        "outputPath": "/home/earlymikoman/assignment-6-azure-file-server-Earlymikoman/obj/",
+        "outputPath": "/home/earlymikoman/ML-Prompt-Handler-Service/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/home/earlymikoman/.nuget/NuGet/NuGet.Config"
@@ -90,7 +90,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/8.0.122/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/8.0.124/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
