@@ -4,8 +4,16 @@ using AzureFileServer.Utils;
 using Microsoft.Extensions.Primitives;
 using System.Reflection.Metadata.Ecma335;
 using System.Text;
+using System.Security.Cryptography;
 
 namespace AzureFileServer.FileServer;
+
+string QuickHash(string input)
+{
+    var inputBytes = Encoding.UTF8.GetBytes(input);
+    var inputHash = SHA256.HashData(inputBytes);
+    return Convert.ToHexString(inputHash);
+}
 
 // This is the core logic of the web server and hosts all of the HTTP
 // handlers used by the web server regarding File Server functionality.
@@ -53,7 +61,7 @@ public class FileServerHandlers
     {
         // "using" is a C# system to ensure that the object is disposed of properly
         // when the block is exited. In this case, it will call the Dispose method
-        using(var log = _logger.StartMethod(nameof(DefaultDelegate), context))
+        using (var log = _logger.StartMethod(nameof(DefaultDelegate), context))
         {
             try
             {
@@ -64,35 +72,9 @@ public class FileServerHandlers
                 // health information to know how to react to your service, so
                 // don't be surprised if you see code with more involved health 
                 // checks.
-                await context.Response.WriteAsync("Default for ml-prompt-handler");
+                await context.Response.WriteAsync("Default for ml-data-handler = " + QuickHash("Default for ml-data-handler = "));
             }
-            catch(Exception e)
-            {
-                // While you can just throw the exception back to the web server,
-                // it is not recommended. It is better to catch the exception and
-                // log it, then return a 500 Internal Server Error to the caller yourself.
-                log.HandleException(e);
-            }
-        }
-    }
-
-    public async Task XometryDelegate(HttpContext context)
-    {
-        using (var log = _logger.StartMethod(nameof(XometryDelegate), context))
-        {
-            try
-            {
-                HttpRequest request = context.Request;
-                string data = "";
-
-                using (var streamReader = new StreamReader(request.Body))
-                {
-                    data = await streamReader.ReadToEndAsync();
-                }
-
-                await context.Response.WriteAsync(data);
-            }
-            catch(Exception e)
+            catch (Exception e)
             {
                 // While you can just throw the exception back to the web server,
                 // it is not recommended. It is better to catch the exception and
@@ -111,7 +93,7 @@ public class FileServerHandlers
     {
         // "using" is a C# system to ensure that the object is disposed of properly
         // when the block is exited. In this case, it will call the Dispose method
-        using(var log = _logger.StartMethod(nameof(HealthCheckDelegate), context))
+        using (var log = _logger.StartMethod(nameof(HealthCheckDelegate), context))
         {
             try
             {
@@ -124,7 +106,7 @@ public class FileServerHandlers
                 // checks.
                 await context.Response.WriteAsync("Alive");
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 // While you can just throw the exception back to the web server,
                 // it is not recommended. It is better to catch the exception and
@@ -134,9 +116,9 @@ public class FileServerHandlers
         }
     }
 
-    public async Task UploadFileDelegate(HttpContext context)
+    public async Task UploadPromptDelegate(HttpContext context)
     {
-        using(var log = _logger.StartMethod(nameof(UploadFileDelegate), context))
+        using (var log = _logger.StartMethod(nameof(UploadPromptDelegate), context))
         {
             try
             {
@@ -152,9 +134,9 @@ public class FileServerHandlers
                 m.userid = GetParameterFromList("userid", request, log);
                 m.filename = fileContent.FileName;
                 m.contenttype = fileContent.ContentType;
-                m.contentlength = fileContent.Length; 
+                m.contentlength = fileContent.Length;
 
-                m.filename = Path.ChangeExtension(Path.GetFileNameWithoutExtension(m.filename), Path.GetExtension(m.filename).ToLowerInvariant());               
+                m.filename = Path.ChangeExtension(Path.GetFileNameWithoutExtension(m.filename), Path.GetExtension(m.filename).ToLowerInvariant());
 
                 log.SetAttribute("request.filename", m.filename);
                 log.SetAttribute("request.contenttype", m.contenttype);
@@ -187,16 +169,16 @@ public class FileServerHandlers
             {
                 log.LogUserError(e.Message);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 log.HandleException(e);
             }
         }
     }
 
-    public async Task DownloadFileDelegate(HttpContext context)
+    public async Task DownloadPromptDelegate(HttpContext context)
     {
-        using(var log = _logger.StartMethod(nameof(DownloadFileDelegate), context))
+        using (var log = _logger.StartMethod(nameof(DownloadPromptDelegate), context))
         {
             try
             {
@@ -240,16 +222,16 @@ public class FileServerHandlers
             {
                 log.LogUserError(e.Message);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 log.HandleException(e);
             }
         }
     }
 
-    public async Task ListFilesDelegate(HttpContext context)
+    public async Task ListPromptsDelegate(HttpContext context)
     {
-        using(var log = _logger.StartMethod(nameof(ListFilesDelegate), context))
+        using (var log = _logger.StartMethod(nameof(ListPromptsDelegate), context))
         {
             try
             {
@@ -267,7 +249,7 @@ public class FileServerHandlers
                 {
                     throw new UserErrorException();
                 }
-                
+
                 string fileStrings = metadatas.Count() + " Files Found:\n";
                 foreach (FileMetadata metadata in metadatas)
                 {
@@ -291,16 +273,16 @@ public class FileServerHandlers
             {
                 log.LogUserError(e.Message);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 log.HandleException(e);
             }
         }
     }
 
-    public async Task DeleteFileDelegate(HttpContext context)
+    public async Task DeletePromptDelegate(HttpContext context)
     {
-        using(var log = _logger.StartMethod(nameof(DeleteFileDelegate), context))
+        using (var log = _logger.StartMethod(nameof(DeletePromptDelegate), context))
         {
             try
             {
@@ -325,7 +307,7 @@ public class FileServerHandlers
                 else
                 {
                     deletionStatus = "File Not Found";
-                    
+
                 }
                 log.SetAttribute("deletion.status", deletionStatus);
 
@@ -343,7 +325,7 @@ public class FileServerHandlers
                     await bodyWriter.FlushAsync();
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 log.HandleException(e);
             }

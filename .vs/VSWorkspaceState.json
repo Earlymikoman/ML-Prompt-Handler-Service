@@ -1,6 +1,8 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\FileServer"
   ],
+  "SelectedNode": "\\FileServer\\FileServerHandlers.cs",
   "PreviewInSolutionExplorer": false
 }
