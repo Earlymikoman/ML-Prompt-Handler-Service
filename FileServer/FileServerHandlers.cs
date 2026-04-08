@@ -252,10 +252,10 @@ public class FileServerHandlers
                     throw new UserErrorException();
                 }
 
-                string fileStrings = metadatas.Count() + " Files Found:\n";
+                string fileStrings = metadatas.Count() + " Prompts Found:\n";
                 foreach (PromptMetadata metadata in metadatas)
                 {
-                    fileStrings += "\t" + metadata.ToString() + "\n";
+                    fileStrings += /*"\t" + */metadata.promptname + "\n";
                 }
                 response.StatusCode = 200;
                 response.ContentLength = Encoding.UTF8.GetByteCount(fileStrings);
