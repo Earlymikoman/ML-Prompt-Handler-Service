@@ -5,6 +5,7 @@ using Microsoft.Extensions.Primitives;
 using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Security.Cryptography;
+using System.Text.Json;
 
 namespace AzureFileServer.FileServer;
 
@@ -252,20 +253,7 @@ public class FileServerHandlers
                     throw new UserErrorException();
                 }
 
-                string fileStrings = metadatas.Count() + " Prompts Found:\n";
-                foreach (PromptMetadata metadata in metadatas)
-                {
-                    fileStrings += /*"\t" + */metadata.promptname + "\n";
-                }
-                response.StatusCode = 200;
-                response.ContentLength = Encoding.UTF8.GetByteCount(fileStrings);
-                response.ContentType = "text/plain; charset=utf-8";
-
-                await using (var bodyWriter = new StreamWriter(response.Body, leaveOpen: true))
-                {
-                    await bodyWriter.WriteAsync(fileStrings);
-                    await bodyWriter.FlushAsync();
-                }
+                await context.Response.WriteAsJsonAsync(metadatas);
 
                 log.SetAttribute("response.contenttype", response.ContentType);
                 log.SetAttribute("response.contentlength", response.ContentLength);
