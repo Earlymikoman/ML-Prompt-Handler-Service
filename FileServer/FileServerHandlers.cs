@@ -316,6 +316,58 @@ public class FileServerHandlers
         }
     }
 
+    public async Task GetAllPromptsDelegate(HttpContext context)
+    {
+        using(var log = _logger.StartMethod(nameof(GetAllPromptsDelegate), context))
+        {
+            try
+            {
+                HttpRequest request = context.Request;
+
+                string prompttype = GetParameterFromList("prompttype", request, log);
+
+                // TODO: Implement the list files delegate to return a list of files
+                // that are associated with the userId provided in the HTTP request.
+                HttpResponse response = context.Response;
+                string query = $"SELECT * FROM c WHERE c.prompttype = \"{prompttype}\"";
+                IEnumerable<PromptMetadata> metadatas = await _cosmosDbWrapper.GetItemsAsync<PromptMetadata>(query);
+                if (metadatas == null)
+                {
+                    throw new UserErrorException();
+                }
+                
+                response.Headers.Append("Content-Disposition", $"attachment; filename=\"{prompttype}_prompts.json\"");
+
+                var responses = new List<object>();
+                var blobStorage = new BlobStorageWrapper(_configuration);
+                foreach (var metadata in metadatas)
+                {
+                    using var stream = new MemoryStream();
+                    await blobStorage.DownloadBlob(metadata.prompttype, metadata.promptname, stream);
+                    stream.Position = 0;
+
+                    using var streamreader = new StreamReader(stream);
+                    string blobdata = await streamreader.ReadToEndAsync();
+                    responses.Add(new {PromptName=metadata.promptname, PromptData=blobdata});
+                }
+
+                await response.WriteAsJsonAsync(responses);
+
+                log.SetAttribute("response.contenttype", response.ContentType);
+                log.SetAttribute("response.contentlength", response.ContentLength);
+                log.SetAttribute("response.content", response.Body);
+            }
+            catch (UserErrorException e)
+            {
+                log.LogUserError(e.Message);
+            }
+            catch(Exception e)
+            {
+                log.HandleException(e);
+            }
+        }
+    }
+
     public async Task DeletePromptDelegate(HttpContext context)
     {
         using (var log = _logger.StartMethod(nameof(DeletePromptDelegate), context))

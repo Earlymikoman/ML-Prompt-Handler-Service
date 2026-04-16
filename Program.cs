@@ -59,6 +59,7 @@ class Program
         app.MapGet("/healthcheck", instance.HealthCheckDelegate);
         app.MapGet("/getprompt", instance.GetPromptDelegate);
         app.MapGet("/listprompts", instance.ListPromptsDelegate);
+        app.MapGet("/getallprompts", instance.GetAllPromptsDelegate);
         app.MapGet("/deleteprompt", instance.DeletePromptDelegate);
         app.MapPost("/uploadprompt", instance.UploadPromptDelegate);
         app.MapGet("/findpromptmetadata", instance.FindPromptMetadataDelegate);
