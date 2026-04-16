@@ -140,6 +140,7 @@ public class FileServerHandlers
 
                 //m.promptname = Path.ChangeExtension(Path.GetFileNameWithoutExtension(m.promptname), Path.GetExtension(m.promptname).ToLowerInvariant());
                 m.promptname = Path.GetFileNameWithoutExtension(m.promptname).ToLowerInvariant();
+                m.prompttype = m.prompttype.ToLowerInvariant();
                 m.timestamp = DateTime.UtcNow.ToString("o");
 
                 log.SetAttribute("request.promptname", m.promptname);
