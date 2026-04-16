@@ -140,10 +140,12 @@ public class FileServerHandlers
 
                 //m.promptname = Path.ChangeExtension(Path.GetFileNameWithoutExtension(m.promptname), Path.GetExtension(m.promptname).ToLowerInvariant());
                 m.promptname = Path.GetFileNameWithoutExtension(m.promptname).ToLowerInvariant();
+                m.timestamp = DateTime.UtcNow.ToString("o");
 
                 log.SetAttribute("request.promptname", m.promptname);
                 log.SetAttribute("request.contenttype", m.contenttype);
                 log.SetAttribute("request.contentlength", m.contentlength);
+                log.SetAttribute("request.timestamp", m.timestamp);
 
                 // First step is we will write the metadata to CosmosDB
                 // Here we are using Type mapping to convert our data structure
@@ -219,6 +221,46 @@ public class FileServerHandlers
 
                 log.SetAttribute("response.contenttype", response.ContentType);
                 log.SetAttribute("response.contentlength", response.ContentLength);
+                log.SetAttribute("response.content", response.Body);
+            }
+            catch (UserErrorException e)
+            {
+                log.LogUserError(e.Message);
+            }
+            catch (Exception e)
+            {
+                log.HandleException(e);
+            }
+        }
+    }
+
+    public async Task FindPromptNameDelegate(HttpContext context)
+    {
+        using (var log = _logger.StartMethod(nameof(FindPromptNameDelegate), context))
+        {
+            try
+            {
+                HttpRequest request = context.Request;
+
+                PromptMetadata m = new PromptMetadata();
+                m.prompttype = GetParameterFromList("prompttype", request, log);
+                m.timestamp = GetParameterFromList("timestamp", request, log);
+
+                // TODO: Implement the list files delegate to return a list of files
+                // that are associated with the prompttype provided in the HTTP request.
+                HttpResponse response = context.Response;
+                string query = $"SELECT TOP 1 * FROM c WHERE c.prompttype = \"{m.prompttype}\" AND c.timestamp > \"{m.timestamp}\" ORDER BY c.timestamp ASC";
+                IEnumerable<PromptMetadata> metadatas = await _cosmosDbWrapper.GetItemsAsync<PromptMetadata>(query);
+                if (metadatas == null)
+                {
+                    throw new UserErrorException("No New Prompt Found");
+                }
+                PromptMetadata nextMetadata = metadatas.First();
+
+                await context.Response.WriteAsJsonAsync(nextMetadata);
+
+                log.SetAttribute("response.contenttype", response.ContentType);
+                //log.SetAttribute("response.contentlength", response.ContentLength);//I get the sense that WriteAsJsonAsync not automatically setting ContentLength means it's not necessary.
                 log.SetAttribute("response.content", response.Body);
             }
             catch (UserErrorException e)

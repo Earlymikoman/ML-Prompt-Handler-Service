@@ -15,12 +15,14 @@ public class PromptMetadata
 
     public string prompttype { get; set; } = string.Empty;
     public string promptname { get; set; } = string.Empty;
+    
+    public string timestamp {get;set;} = string.Empty;
     public string contenttype { get; set; } = string.Empty;
     public long contentlength { get; set; } = 0;
 
-    public override string ToString()
-    {
-        //return $"id: {id}, userid: {userid}, filename: {filename}, contenttype: {contenttype}, contentlength: {contentlength}";
-        return $"id: {id}, prompttype: {prompttype}, promptname: {promptname}, contenttype: {contenttype}, contentlength: {contentlength}";
-    }
+    // public override string ToString()
+    // {
+    //     //return $"id: {id}, userid: {userid}, filename: {filename}, contenttype: {contenttype}, contentlength: {contentlength}";
+    //     return $"id: {id}, prompttype: {prompttype}, promptname: {promptname}, contenttype: {contenttype}, contentlength: {contentlength}";
+    // }
 }
