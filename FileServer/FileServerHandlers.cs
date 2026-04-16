@@ -259,7 +259,7 @@ public class FileServerHandlers
                 await context.Response.WriteAsJsonAsync(promptnames);
 
                 log.SetAttribute("response.contenttype", response.ContentType);
-                log.SetAttribute("response.contentlength", response.ContentLength);
+                //log.SetAttribute("response.contentlength", response.ContentLength);//I get the sense that WriteAsJsonAsync not automatically setting ContentLength means it's not necessary.
                 log.SetAttribute("response.content", response.Body);
             }
             catch (UserErrorException e)
