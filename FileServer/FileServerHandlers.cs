@@ -253,7 +253,10 @@ public class FileServerHandlers
                     throw new UserErrorException();
                 }
 
-                await context.Response.WriteAsJsonAsync(metadatas);
+                //What magery is this!? I think I'll have to look into "Select" syntax in the future.
+                List<string> promptnames = metadatas.Select(p => p.promptname).ToList();
+
+                await context.Response.WriteAsJsonAsync(promptnames);
 
                 log.SetAttribute("response.contenttype", response.ContentType);
                 log.SetAttribute("response.contentlength", response.ContentLength);
