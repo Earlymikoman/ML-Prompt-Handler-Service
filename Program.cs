@@ -61,6 +61,7 @@ class Program
         app.MapGet("/listprompts", instance.ListPromptsDelegate);
         app.MapGet("/deleteprompt", instance.DeletePromptDelegate);
         app.MapPost("/uploadprompt", instance.UploadPromptDelegate);
+        app.MapGet("/findpromptname", instance.FindPromptNameDelegate);
 
         app.Run();
     }
