@@ -234,9 +234,9 @@ public class FileServerHandlers
         }
     }
 
-    public async Task FindPromptNameDelegate(HttpContext context)
+    public async Task FindPromptMetadataDelegate(HttpContext context)
     {
-        using (var log = _logger.StartMethod(nameof(FindPromptNameDelegate), context))
+        using (var log = _logger.StartMethod(nameof(FindPromptMetadataDelegate), context))
         {
             try
             {
