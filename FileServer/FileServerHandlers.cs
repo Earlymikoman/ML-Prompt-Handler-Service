@@ -397,26 +397,28 @@ public class FileServerHandlers
                 if (await _cosmosDbWrapper.GetItemAsync<PromptMetadata>(m.id, m.prompttype) != null)
                 {
                     await _cosmosDbWrapper.DeleteItemAsync(m.id, m.prompttype);
-                    deletionStatus = "File Found And Deleted";
+                    deletionStatus = "Prompt Found And Deleted";
                 }
                 else
                 {
-                    deletionStatus = "File Not Found";
+                    deletionStatus = "Prompt Not Found";
 
                 }
                 log.SetAttribute("deletion.status", deletionStatus);
 
                 var blobStorage = new BlobStorageWrapper(_configuration);
-                await blobStorage.DeleteBlob(m.prompttype, m.promptname);
+                await blobStorage.DeleteBlob(m.prompttype, m.id);
+
+                string returnString = deletionStatus + ": " + m.id;
 
                 HttpResponse response = context.Response;
                 response.StatusCode = 200;
-                response.ContentLength = Encoding.UTF8.GetByteCount(deletionStatus + ": " + m.promptname);
+                response.ContentLength = Encoding.UTF8.GetByteCount(returnString);
                 response.ContentType = "text/plain; charset=utf-8";
 
                 await using (var bodyWriter = new StreamWriter(response.Body, leaveOpen: true))
                 {
-                    await bodyWriter.WriteAsync(deletionStatus + ": " + m.promptname);
+                    await bodyWriter.WriteAsync(returnString);
                     await bodyWriter.FlushAsync();
                 }
             }
