@@ -39,7 +39,7 @@ public class FileServerHandlers
         _cosmosDbWrapper = new CosmosDbWrapper(configuration);
     }
 
-    private static string GetParameterFromList(string parameterName, HttpRequest request, MethodLogger log)
+    private static string GetParameterFromList(string parameterName, HttpRequest request, MethodLogger log, bool ConvertToLower = true)
     {
         // Obtain the parameter from the caller
         if (request.Query.TryGetValue(parameterName, out StringValues items))
@@ -56,7 +56,14 @@ public class FileServerHandlers
             throw new UserErrorException($"No {parameterName} found");
         }
 
-        return items[0];
+        if (ConvertToLower)
+        {
+            return items[0].ToLowerInvariant();
+        }
+        else
+        {
+            return items[0];
+        }
     }
 
     public async Task DefaultDelegate(HttpContext context)
