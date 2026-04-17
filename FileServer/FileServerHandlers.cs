@@ -252,7 +252,7 @@ public class FileServerHandlers
 
                 PromptMetadata m = new PromptMetadata();
                 m.prompttype = GetParameterFromList("prompttype", request, log);
-                m.timestamp = GetParameterFromList("timestamp", request, log);
+                m.timestamp = GetParameterFromList("timestamp", request, log, false);
 
                 // TODO: Implement the list files delegate to return a list of files
                 // that are associated with the prompttype provided in the HTTP request.
