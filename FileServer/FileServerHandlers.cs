@@ -387,8 +387,6 @@ public class FileServerHandlers
                 m.prompttype = GetParameterFromList("prompttype", request, log);
                 m.promptname = GetParameterFromList("promptname", request, log);
 
-                m.promptname = Path.ChangeExtension(Path.GetFileNameWithoutExtension(m.promptname), Path.GetExtension(m.promptname).ToLowerInvariant());
-
                 // TODO: Implement the delete file delegate to remove the file
                 // from the storage system and the metadata from the CosmosDB database.
                 //Failure to find the file to be deleted will be logged, but not considered a failure state.
