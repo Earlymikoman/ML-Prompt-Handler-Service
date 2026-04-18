@@ -229,7 +229,7 @@ public class PromptHandlerHandlers
 
                     using var streamreader = new StreamReader(stream);
                     string blobdata = await streamreader.ReadToEndAsync();
-                    var responsedata = new {PromptName=m.promptname, PromptData=blobdata};
+                    var responsedata = new {promptname=m.promptname, promptdata=blobdata};
 
                 await response.WriteAsJsonAsync(responsedata);
 
@@ -361,7 +361,7 @@ public class PromptHandlerHandlers
 
                     using var streamreader = new StreamReader(stream);
                     string blobdata = await streamreader.ReadToEndAsync();
-                    responses.Add(new {PromptName=metadata.promptname, PromptData=blobdata});
+                    responses.Add(new {promptname=metadata.promptname, promptdata=blobdata});
                 }
 
                 await response.WriteAsJsonAsync(responses);
