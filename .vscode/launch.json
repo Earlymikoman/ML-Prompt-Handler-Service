@@ -6,7 +6,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/bin/Debug/net8.0/azure-file-server.dll",
+            "program": "${workspaceFolder}/bin/Debug/net8.0/ml-prompt-handler.dll",
             "args": [],
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
@@ -32,7 +32,7 @@
             "request": "launch",
             "preLaunchTask": "docker-run: debug",
             "netCore": {
-                "appProject": "${workspaceFolder}/azure-file-server.csproj"
+                "appProject": "${workspaceFolder}/ml-prompt-handler.csproj"
             }
         }
     ]

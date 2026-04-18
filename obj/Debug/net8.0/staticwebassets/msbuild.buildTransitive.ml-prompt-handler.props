@@ -1,0 +1,3 @@
+<Project>
+  <Import Project="../buildMultiTargeting/ml-prompt-handler.props" />
+</Project>

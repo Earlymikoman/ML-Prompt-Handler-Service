@@ -72,7 +72,7 @@ public class FileServerHandlers
                 // health information to know how to react to your service, so
                 // don't be surprised if you see code with more involved health 
                 // checks.
-                await context.Response.WriteAsync("Default for ml-data-handler = " + QuickHash("Default for ml-data-handler = "));
+                await context.Response.WriteAsync("Default for ml-prompt-handler = " + QuickHash("Default for ml-prompt-handler = "));
             }
             catch (Exception e)
             {
