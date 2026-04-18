@@ -225,7 +225,16 @@ public class PromptHandlerHandlers
                 response.Headers.Append("Content-Disposition", $"attachment; promptname=\"{Path.GetFileName(m.promptname)}\"");
 
                 var blobStorage = new BlobStorageWrapper(_configuration);
-                await blobStorage.DownloadBlob(m.prompttype, m.promptname, response.Body);
+                
+                using var stream = new MemoryStream();
+                    await blobStorage.DownloadBlob(m.prompttype, m.promptname, stream);
+                    stream.Position = 0;
+
+                    using var streamreader = new StreamReader(stream);
+                    string blobdata = await streamreader.ReadToEndAsync();
+                    var responsedata = new {PromptName=m.promptname, PromptData=blobdata};
+
+                await response.WriteAsJsonAsync(responsedata);
 
                 log.SetAttribute("response.contenttype", response.ContentType);
                 log.SetAttribute("response.contentlength", response.ContentLength);
