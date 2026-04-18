@@ -5,6 +5,7 @@ using Microsoft.Extensions.Primitives;
 using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Security.Cryptography;
+using System.Text.Json;
 
 namespace AzureFileServer.FileServer;
 
@@ -12,6 +13,7 @@ namespace AzureFileServer.FileServer;
 // handlers used by the web server regarding File Server functionality.
 public class FileServerHandlers
 {
+    //StackOverflow https://stackoverflow.com/questions/12416249/hashing-a-string-with-sha256
     string QuickHash(string input)
     {
         var inputBytes = Encoding.UTF8.GetBytes(input);
@@ -37,7 +39,7 @@ public class FileServerHandlers
         _cosmosDbWrapper = new CosmosDbWrapper(configuration);
     }
 
-    private static string GetParameterFromList(string parameterName, HttpRequest request, MethodLogger log)
+    private static string GetParameterFromList(string parameterName, HttpRequest request, MethodLogger log, bool ConvertToLower = true)
     {
         // Obtain the parameter from the caller
         if (request.Query.TryGetValue(parameterName, out StringValues items))
@@ -54,7 +56,14 @@ public class FileServerHandlers
             throw new UserErrorException($"No {parameterName} found");
         }
 
-        return items[0];
+        if (ConvertToLower)
+        {
+            return items[0].ToLowerInvariant();
+        }
+        else
+        {
+            return items[0];
+        }
     }
 
     public async Task DefaultDelegate(HttpContext context)
@@ -72,7 +81,7 @@ public class FileServerHandlers
                 // health information to know how to react to your service, so
                 // don't be surprised if you see code with more involved health 
                 // checks.
-                await context.Response.WriteAsync("Default for ml-data-handler = " + QuickHash("Default for ml-data-handler = "));
+                await context.Response.WriteAsync("Default for ml-prompt-handler = " + QuickHash("Default for ml-prompt-handler = "));
             }
             catch (Exception e)
             {
@@ -130,28 +139,32 @@ public class FileServerHandlers
                     throw new UserErrorException("No file content found");
                 }
 
-                FileMetadata m = new FileMetadata();
-                m.userid = GetParameterFromList("userid", request, log);
-                m.filename = fileContent.FileName;
+                PromptMetadata m = new PromptMetadata();
+                m.prompttype = GetParameterFromList("prompttype", request, log);
+                m.promptname = fileContent.FileName;
                 m.contenttype = fileContent.ContentType;
                 m.contentlength = fileContent.Length;
 
-                m.filename = Path.ChangeExtension(Path.GetFileNameWithoutExtension(m.filename), Path.GetExtension(m.filename).ToLowerInvariant());
+                //m.promptname = Path.ChangeExtension(Path.GetFileNameWithoutExtension(m.promptname), Path.GetExtension(m.promptname).ToLowerInvariant());
+                m.promptname = Path.GetFileNameWithoutExtension(m.promptname).ToLowerInvariant();
+                m.prompttype = m.prompttype.ToLowerInvariant();
+                m.timestamp = DateTime.UtcNow.ToString("o");
 
-                log.SetAttribute("request.filename", m.filename);
+                log.SetAttribute("request.promptname", m.promptname);
                 log.SetAttribute("request.contenttype", m.contenttype);
                 log.SetAttribute("request.contentlength", m.contentlength);
+                log.SetAttribute("request.timestamp", m.timestamp);
 
                 // First step is we will write the metadata to CosmosDB
                 // Here we are using Type mapping to convert our data structure
                 // to a JSON document that can be stored in CosmosDB.
-                if (await _cosmosDbWrapper.GetItemAsync<FileMetadata>(m.id, m.userid) != null)
+                if (await _cosmosDbWrapper.GetItemAsync<PromptMetadata>(m.id, m.prompttype) != null)
                 {
-                    await _cosmosDbWrapper.UpdateItemAsync(m.id, m.userid, m);
+                    await _cosmosDbWrapper.UpdateItemAsync(m.id, m.prompttype, m);
                 }
                 else
                 {
-                    await _cosmosDbWrapper.AddItemAsync(m, m.userid);
+                    await _cosmosDbWrapper.AddItemAsync(m, m.prompttype);
                 }
 
                 // Now we write the file into a blob storage element within the container.
@@ -159,7 +172,7 @@ public class FileServerHandlers
                 var blobStorage = new BlobStorageWrapper(_configuration);
                 using (var streamReader = new StreamReader(fileContent.OpenReadStream()))
                 {
-                    await blobStorage.WriteBlob(m.userid, m.filename, streamReader.BaseStream);
+                    await blobStorage.WriteBlob(m.prompttype, m.promptname, streamReader.BaseStream);
                 }
 
                 // The POST has no response body, so we just return and the system
@@ -184,21 +197,21 @@ public class FileServerHandlers
             {
                 HttpRequest request = context.Request;
 
-                FileMetadata m = new FileMetadata();
-                m.userid = GetParameterFromList("userid", request, log);
-                m.filename = GetParameterFromList("filename", request, log);
+                PromptMetadata m = new PromptMetadata();
+                m.prompttype = GetParameterFromList("prompttype", request, log);
+                m.promptname = GetParameterFromList("promptname", request, log);
 
-                m.filename = Path.ChangeExtension(Path.GetFileNameWithoutExtension(m.filename), Path.GetExtension(m.filename).ToLowerInvariant());
+                m.promptname = Path.GetFileNameWithoutExtension(m.promptname).ToLowerInvariant();
 
-                log.SetAttribute("request.filename", m.filename);
+                log.SetAttribute("request.promptname", m.promptname);
 
                 // TODO: Implement the download file delegate to return the file
                 // contents to the caller via the HTTP response after receiving both
-                // the userId and the filename to find.
+                // the prompttype and the promptname to find.
 
                 HttpResponse response = context.Response;
                 //If this fails, should throw a UserErrorException FileNotFound (404)
-                m = await _cosmosDbWrapper.GetItemAsync<FileMetadata>(m.id, m.userid);
+                m = await _cosmosDbWrapper.GetItemAsync<PromptMetadata>(m.id, m.prompttype);
                 if (m == null)
                 {
                     throw new UserErrorException();
@@ -209,13 +222,53 @@ public class FileServerHandlers
                 //Went with actual download because uploadfile seems to deal in actual files, so downloadfile should too.
                 //Full disclosure, this line in particular is just AI (Grok); I asked it how to download a file
                 //via http rather than just print the response, and this was the result.
-                response.Headers.Append("Content-Disposition", $"attachment; filename=\"{Path.GetFileName(m.filename)}\"");
+                response.Headers.Append("Content-Disposition", $"attachment; promptname=\"{Path.GetFileName(m.promptname)}\"");
 
                 var blobStorage = new BlobStorageWrapper(_configuration);
-                await blobStorage.DownloadBlob(m.userid, m.filename, response.Body);
+                await blobStorage.DownloadBlob(m.prompttype, m.promptname, response.Body);
 
                 log.SetAttribute("response.contenttype", response.ContentType);
                 log.SetAttribute("response.contentlength", response.ContentLength);
+                log.SetAttribute("response.content", response.Body);
+            }
+            catch (UserErrorException e)
+            {
+                log.LogUserError(e.Message);
+            }
+            catch (Exception e)
+            {
+                log.HandleException(e);
+            }
+        }
+    }
+
+    public async Task FindPromptMetadataDelegate(HttpContext context)
+    {
+        using (var log = _logger.StartMethod(nameof(FindPromptMetadataDelegate), context))
+        {
+            try
+            {
+                HttpRequest request = context.Request;
+
+                PromptMetadata m = new PromptMetadata();
+                m.prompttype = GetParameterFromList("prompttype", request, log);
+                m.timestamp = GetParameterFromList("timestamp", request, log, false);
+
+                // TODO: Implement the list files delegate to return a list of files
+                // that are associated with the prompttype provided in the HTTP request.
+                HttpResponse response = context.Response;
+                string query = $"SELECT TOP 1 * FROM c WHERE c.prompttype = \"{m.prompttype}\" AND c.timestamp > \"{m.timestamp}\" ORDER BY c.timestamp ASC";
+                IEnumerable<PromptMetadata> metadatas = await _cosmosDbWrapper.GetItemsAsync<PromptMetadata>(query);
+                if (metadatas == null)
+                {
+                    throw new UserErrorException("No New Prompt Found");
+                }
+                PromptMetadata nextMetadata = metadatas.First();
+
+                await context.Response.WriteAsJsonAsync(nextMetadata);
+
+                log.SetAttribute("response.contenttype", response.ContentType);
+                //log.SetAttribute("response.contentlength", response.ContentLength);//I get the sense that WriteAsJsonAsync not automatically setting ContentLength means it's not necessary.
                 log.SetAttribute("response.content", response.Body);
             }
             catch (UserErrorException e)
@@ -237,36 +290,26 @@ public class FileServerHandlers
             {
                 HttpRequest request = context.Request;
 
-                FileMetadata m = new FileMetadata();
-                m.userid = GetParameterFromList("userid", request, log);
+                PromptMetadata m = new PromptMetadata();
+                m.prompttype = GetParameterFromList("prompttype", request, log);
 
                 // TODO: Implement the list files delegate to return a list of files
-                // that are associated with the userId provided in the HTTP request.
+                // that are associated with the prompttype provided in the HTTP request.
                 HttpResponse response = context.Response;
-                string query = $"SELECT * FROM c WHERE c.userid = \"{m.userid}\"";
-                IEnumerable<FileMetadata> metadatas = await _cosmosDbWrapper.GetItemsAsync<FileMetadata>(query);
+                string query = $"SELECT * FROM c WHERE c.prompttype = \"{m.prompttype}\"";
+                IEnumerable<PromptMetadata> metadatas = await _cosmosDbWrapper.GetItemsAsync<PromptMetadata>(query);
                 if (metadatas == null)
                 {
                     throw new UserErrorException();
                 }
 
-                string fileStrings = metadatas.Count() + " Files Found:\n";
-                foreach (FileMetadata metadata in metadatas)
-                {
-                    fileStrings += "\t" + metadata.ToString() + "\n";
-                }
-                response.StatusCode = 200;
-                response.ContentLength = Encoding.UTF8.GetByteCount(fileStrings);
-                response.ContentType = "text/plain; charset=utf-8";
+                //What magery is this!? I think I'll have to look into "Select" syntax in the future.
+                List<string> promptnames = metadatas.Select(p => p.promptname).ToList();
 
-                await using (var bodyWriter = new StreamWriter(response.Body, leaveOpen: true))
-                {
-                    await bodyWriter.WriteAsync(fileStrings);
-                    await bodyWriter.FlushAsync();
-                }
+                await context.Response.WriteAsJsonAsync(promptnames);
 
                 log.SetAttribute("response.contenttype", response.ContentType);
-                log.SetAttribute("response.contentlength", response.ContentLength);
+                //log.SetAttribute("response.contentlength", response.ContentLength);//I get the sense that WriteAsJsonAsync not automatically setting ContentLength means it's not necessary.
                 log.SetAttribute("response.content", response.Body);
             }
             catch (UserErrorException e)
@@ -274,6 +317,58 @@ public class FileServerHandlers
                 log.LogUserError(e.Message);
             }
             catch (Exception e)
+            {
+                log.HandleException(e);
+            }
+        }
+    }
+
+    public async Task GetAllPromptsDelegate(HttpContext context)
+    {
+        using(var log = _logger.StartMethod(nameof(GetAllPromptsDelegate), context))
+        {
+            try
+            {
+                HttpRequest request = context.Request;
+
+                string prompttype = GetParameterFromList("prompttype", request, log);
+
+                // TODO: Implement the list files delegate to return a list of files
+                // that are associated with the userId provided in the HTTP request.
+                HttpResponse response = context.Response;
+                string query = $"SELECT * FROM c WHERE c.prompttype = \"{prompttype}\"";
+                IEnumerable<PromptMetadata> metadatas = await _cosmosDbWrapper.GetItemsAsync<PromptMetadata>(query);
+                if (metadatas == null)
+                {
+                    throw new UserErrorException();
+                }
+                
+                response.Headers.Append("Content-Disposition", $"attachment; filename=\"{prompttype}_prompts.json\"");
+
+                var responses = new List<object>();
+                var blobStorage = new BlobStorageWrapper(_configuration);
+                foreach (var metadata in metadatas)
+                {
+                    using var stream = new MemoryStream();
+                    await blobStorage.DownloadBlob(metadata.prompttype, metadata.promptname, stream);
+                    stream.Position = 0;
+
+                    using var streamreader = new StreamReader(stream);
+                    string blobdata = await streamreader.ReadToEndAsync();
+                    responses.Add(new {PromptName=metadata.promptname, PromptData=blobdata});
+                }
+
+                await response.WriteAsJsonAsync(responses);
+
+                // log.SetAttribute("response.contenttype", response.ContentType);
+                // log.SetAttribute("response.contentlength", response.ContentLength);
+                // log.SetAttribute("response.content", response.Body);
+            }
+            catch (UserErrorException e)
+            {
+                log.LogUserError(e.Message);
+            }
+            catch(Exception e)
             {
                 log.HandleException(e);
             }
@@ -288,40 +383,40 @@ public class FileServerHandlers
             {
                 HttpRequest request = context.Request;
 
-                FileMetadata m = new FileMetadata();
-                m.userid = GetParameterFromList("userid", request, log);
-                m.filename = GetParameterFromList("filename", request, log);
-
-                m.filename = Path.ChangeExtension(Path.GetFileNameWithoutExtension(m.filename), Path.GetExtension(m.filename).ToLowerInvariant());
+                PromptMetadata m = new PromptMetadata();
+                m.prompttype = GetParameterFromList("prompttype", request, log);
+                m.promptname = GetParameterFromList("promptname", request, log);
 
                 // TODO: Implement the delete file delegate to remove the file
                 // from the storage system and the metadata from the CosmosDB database.
                 //Failure to find the file to be deleted will be logged, but not considered a failure state.
                 //I don't know what would cause "Terminal Failure" to show, but I know it would indeed be terminal, so that's what the default value gets to be.
                 string deletionStatus = "Terminal Failure";
-                if (await _cosmosDbWrapper.GetItemAsync<FileMetadata>(m.id, m.userid) != null)
+                if (await _cosmosDbWrapper.GetItemAsync<PromptMetadata>(m.id, m.prompttype) != null)
                 {
-                    await _cosmosDbWrapper.DeleteItemAsync(m.id, m.userid);
-                    deletionStatus = "File Found And Deleted";
+                    await _cosmosDbWrapper.DeleteItemAsync(m.id, m.prompttype);
+                    deletionStatus = "Prompt Found And Deleted";
                 }
                 else
                 {
-                    deletionStatus = "File Not Found";
+                    deletionStatus = "Prompt Not Found";
 
                 }
                 log.SetAttribute("deletion.status", deletionStatus);
 
                 var blobStorage = new BlobStorageWrapper(_configuration);
-                await blobStorage.DeleteBlob(m.userid, m.filename);
+                await blobStorage.DeleteBlob(m.prompttype, m.id);
+
+                string returnString = deletionStatus + ": " + m.id;
 
                 HttpResponse response = context.Response;
                 response.StatusCode = 200;
-                response.ContentLength = Encoding.UTF8.GetByteCount(deletionStatus + ": " + m.filename);
+                response.ContentLength = Encoding.UTF8.GetByteCount(returnString);
                 response.ContentType = "text/plain; charset=utf-8";
 
                 await using (var bodyWriter = new StreamWriter(response.Body, leaveOpen: true))
                 {
-                    await bodyWriter.WriteAsync(deletionStatus + ": " + m.filename);
+                    await bodyWriter.WriteAsync(returnString);
                     await bodyWriter.FlushAsync();
                 }
             }

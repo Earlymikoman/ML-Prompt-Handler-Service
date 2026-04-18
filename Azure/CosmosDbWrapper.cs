@@ -140,7 +140,7 @@ public class CosmosDbWrapper
         using (var log = _logger.StartMethod(nameof(DeleteItemAsync)))
         {
             log.SetAttribute("id", id);
-            await _container.DeleteItemAsync<FileMetadata>(id, new PartitionKey(pk));
+            await _container.DeleteItemAsync<PromptMetadata>(id, new PartitionKey(pk));
         }
     }
 }
