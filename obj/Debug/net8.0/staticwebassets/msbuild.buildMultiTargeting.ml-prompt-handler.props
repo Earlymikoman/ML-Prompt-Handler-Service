@@ -1,3 +1,0 @@
-<Project>
-  <Import Project="../build/ml-prompt-handler.props" />
-</Project>

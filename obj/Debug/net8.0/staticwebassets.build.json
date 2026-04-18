@@ -1,8 +1,8 @@
 {
   "Version": 1,
   "Hash": "estXC+xa1jbMMNFBI87I1ZaICOUoEVRq4Z/qe/7yRRw=",
-  "Source": "ml-prompt-handler",
-  "BasePath": "_content/ml-prompt-handler",
+  "Source": "azure-file-server",
+  "BasePath": "_content/azure-file-server",
   "Mode": "Default",
   "ManifestType": "Build",
   "ReferencedProjectsConfiguration": [],

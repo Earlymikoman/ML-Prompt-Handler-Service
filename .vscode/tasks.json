@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/ml-prompt-handler.sln",
+                "${workspaceFolder}/azure-file-server.sln",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary;ForceNoAlign"
             ],
@@ -19,7 +19,7 @@
             "type": "process",
             "args": [
                 "publish",
-                "${workspaceFolder}/ml-prompt-handler.sln",
+                "${workspaceFolder}/azure-file-server.sln",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary;ForceNoAlign"
             ],
@@ -33,7 +33,7 @@
                 "watch",
                 "run",
                 "--project",
-                "${workspaceFolder}/ml-prompt-handler.sln"
+                "${workspaceFolder}/azure-file-server.sln"
             ],
             "problemMatcher": "$msCompile"
         },
@@ -44,14 +44,14 @@
                 "build"
             ],
             "dockerBuild": {
-                "tag": "ml-prompt-handler:dev",
+                "tag": "azure-file-server:dev",
                 "target": "base",
                 "dockerfile": "${workspaceFolder}/Dockerfile",
                 "context": "${workspaceFolder}",
                 "pull": true
             },
             "netCore": {
-                "appProject": "${workspaceFolder}/ml-prompt-handler.csproj"
+                "appProject": "${workspaceFolder}/azure-file-server.csproj"
             }
         },
         {
@@ -61,7 +61,7 @@
                 "build"
             ],
             "dockerBuild": {
-                "tag": "ml-prompt-handler:latest",
+                "tag": "azure-file-server:latest",
                 "dockerfile": "${workspaceFolder}/Dockerfile",
                 "context": "${workspaceFolder}",
                 "platform": {
@@ -71,7 +71,7 @@
                 "pull": true
             },
             "netCore": {
-                "appProject": "${workspaceFolder}/ml-prompt-handler.csproj"
+                "appProject": "${workspaceFolder}/azure-file-server.csproj"
             }
         },
         {
@@ -82,7 +82,7 @@
             ],
             "dockerRun": {},
             "netCore": {
-                "appProject": "${workspaceFolder}/ml-prompt-handler.csproj",
+                "appProject": "${workspaceFolder}/azure-file-server.csproj",
                 "enableDebugging": true
             }
         },
@@ -94,7 +94,7 @@
             ],
             "dockerRun": {},
             "netCore": {
-                "appProject": "${workspaceFolder}/ml-prompt-handler.csproj"
+                "appProject": "${workspaceFolder}/azure-file-server.csproj"
             }
         }
     ]

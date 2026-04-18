@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.002.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{3de94af0-7087-41f5-a8f5-c872205d0f90}") = "azure-file-server", "azure-file-server.csproj", "{dcf91525-8892-49f0-b732-73f4667297b0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{dcf91525-8892-49f0-b732-73f4667297b0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{dcf91525-8892-49f0-b732-73f4667297b0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{dcf91525-8892-49f0-b732-73f4667297b0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{dcf91525-8892-49f0-b732-73f4667297b0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {b19c12ef-12d1-4a0f-8dfc-5eb33e73b02a}
+	EndGlobalSection
+EndGlobal
