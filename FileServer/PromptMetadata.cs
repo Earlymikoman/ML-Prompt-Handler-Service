@@ -1,4 +1,4 @@
-namespace AzureFileServer.FileServer;
+namespace MLPromptHandler.PromptHandler;
 
 // This class is used to store metadata about a file and can be
 // used for serializing and deserialzing the JSON data in CosmosDb

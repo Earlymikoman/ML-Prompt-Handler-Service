@@ -1,17 +1,17 @@
 
-using AzureFileServer.Azure;
-using AzureFileServer.Utils;
+using MLPromptHandler.Azure;
+using MLPromptHandler.Utils;
 using Microsoft.Extensions.Primitives;
 using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Security.Cryptography;
 using System.Text.Json;
 
-namespace AzureFileServer.FileServer;
+namespace MLPromptHandler.PromptHandler;
 
 // This is the core logic of the web server and hosts all of the HTTP
 // handlers used by the web server regarding File Server functionality.
-public class FileServerHandlers
+public class PromptHandlerHandlers
 {
     //StackOverflow https://stackoverflow.com/questions/12416249/hashing-a-string-with-sha256
     string QuickHash(string input)
@@ -25,7 +25,7 @@ public class FileServerHandlers
     private readonly Logger _logger;
     private readonly CosmosDbWrapper _cosmosDbWrapper;
 
-    public FileServerHandlers(IConfiguration configuration)
+    public PromptHandlerHandlers(IConfiguration configuration)
     {
         _configuration = configuration;
         if (null == _configuration)

@@ -1,7 +1,7 @@
 using System.Net;
 using OpenTelemetry.Trace;
 
-namespace AzureFileServer.Utils;
+namespace MLPromptHandler.Utils;
 
 // A simple wrapper class to help with logging method entry and exit
 // Note that you can use this recursively, so you can have a method logging

@@ -14,9 +14,9 @@ using OpenTelemetry.Trace;
 
 using Telemetry.Trace;
 
-using AzureFileServer.FileServer;
+using MLPromptHandler.PromptHandler;
 
-namespace AzureFileServer;
+namespace MLPromptHandler;
 
 // This is the entry point for the application. It sets up the configuration and the services
 // that the application will use, and then starts the application running. The application is
@@ -50,7 +50,7 @@ class Program
             .AddJsonConsoleExporter(); // Output log lines to the console
         });
 
-        FileServerHandlers instance = new FileServerHandlers(configuration);
+        PromptHandlerHandlers instance = new PromptHandlerHandlers(configuration);
 
         WebApplication app = builder.Build();
 

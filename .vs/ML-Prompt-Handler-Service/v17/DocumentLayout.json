@@ -22,7 +22,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 16,
+          "SelectedChildIndex": 15,
           "Children": [
             {
               "$type": "Bookmark",
@@ -77,10 +77,6 @@
               "Name": "ST:2:0:{34c7837f-3b3a-449c-bdf0-bdad86cbaf4a}"
             },
             {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
-            },
-            {
               "$type": "Document",
               "DocumentIndex": 1,
               "Title": "appsettings.json",
@@ -90,7 +86,8 @@
               "RelativeToolTip": "appsettings.json",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-03-29T18:27:12.962Z"
+              "WhenOpened": "2026-03-29T18:27:12.962Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -102,7 +99,8 @@
               "RelativeToolTip": "Program.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAEIAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-29T17:36:03.032Z"
+              "WhenOpened": "2026-03-29T17:36:03.032Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -112,7 +110,7 @@
               "RelativeDocumentMoniker": "FileServer\\FileServerHandlers.cs",
               "ToolTip": "C:\\Users\\Xander.DESKTOP-D3VRDR2\\source\\repos\\Earlymikoman\\ML-Prompt-Handler-Service\\FileServer\\FileServerHandlers.cs",
               "RelativeToolTip": "FileServer\\FileServerHandlers.cs",
-              "ViewState": "AgIAAH4AAAAAAAAAAAAAAI0AAAAeAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-03-22T22:52:12.432Z",
               "EditorCaption": ""

@@ -1,9 +1,9 @@
 using Azure.Identity;
 using Azure.Storage.Blobs;
 
-using AzureFileServer.Utils;
+using MLPromptHandler.Utils;
 
-namespace AzureFileServer.Azure;
+namespace MLPromptHandler.Azure;
 
 // A very simple wrapper to make it easier to call Azure Storage Blob APIs
 public class BlobStorageWrapper
@@ -21,8 +21,8 @@ public class BlobStorageWrapper
         string serviceName = configuration["Logging:ServiceName"];
         _logger = new Logger(serviceName);
 
-        string blobEndpoint = configuration["AzureFileServer:ConnectionStrings:BlobStorageEndpoint"];
-        string blobConnectioonString = configuration["AzureFileServer:ConnectionStrings:BlobStorageConnectionString"];
+        string blobEndpoint = configuration["MLPromptHandler:ConnectionStrings:BlobStorageEndpoint"];
+        string blobConnectioonString = configuration["MLPromptHandler:ConnectionStrings:BlobStorageConnectionString"];
         if (string.IsNullOrEmpty(blobConnectioonString))
         {
             _client = new BlobServiceClient(new Uri(blobEndpoint), new DefaultAzureCredential());
