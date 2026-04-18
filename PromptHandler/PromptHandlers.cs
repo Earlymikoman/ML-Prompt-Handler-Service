@@ -219,7 +219,7 @@ public class PromptHandlerHandlers
                 
 
 
-                response.Headers.Append("Content-Disposition", $"attachment; filename=\"{m.id}\"");
+                response.Headers.Append("Content-Disposition", $"attachment; filename=\"{m.id}.json\"");
 
                 var blobStorage = new BlobStorageWrapper(_configuration);
                 
