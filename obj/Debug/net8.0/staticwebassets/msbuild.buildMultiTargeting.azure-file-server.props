@@ -1,3 +1,0 @@
-﻿<Project>
-  <Import Project="../build/azure-file-server.props" />
-</Project>

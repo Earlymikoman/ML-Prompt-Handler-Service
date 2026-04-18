@@ -2,7 +2,7 @@
   "version": 2,
   "dgSpecHash": "+BDghfQrv2JS4xd1gzARnQ3O1qZGR0rkJTIDGuJKC9tcrAUHLdXgJ12IB7+Cb/c9NYsI0bLN7zPchl4Uljit4g==",
   "success": true,
-  "projectFilePath": "/home/earlymikoman/ML-Prompt-Handler-Service/azure-file-server.csproj",
+  "projectFilePath": "/home/earlymikoman/ML-Prompt-Handler-Service/ml-prompt-handler.csproj",
   "expectedPackageFiles": [
     "/home/earlymikoman/.nuget/packages/azure.core/1.39.0/azure.core.1.39.0.nupkg.sha512",
     "/home/earlymikoman/.nuget/packages/azure.identity/1.11.4/azure.identity.1.11.4.nupkg.sha512",

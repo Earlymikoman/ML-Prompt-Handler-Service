@@ -2398,9 +2398,9 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/earlymikoman/ML-Prompt-Handler-Service/azure-file-server.csproj",
-      "projectName": "azure-file-server",
-      "projectPath": "/home/earlymikoman/ML-Prompt-Handler-Service/azure-file-server.csproj",
+      "projectUniqueName": "/home/earlymikoman/ML-Prompt-Handler-Service/ml-prompt-handler.csproj",
+      "projectName": "ml-prompt-handler",
+      "projectPath": "/home/earlymikoman/ML-Prompt-Handler-Service/ml-prompt-handler.csproj",
       "packagesPath": "/home/earlymikoman/.nuget/packages/",
       "outputPath": "/home/earlymikoman/ML-Prompt-Handler-Service/obj/",
       "projectStyle": "PackageReference",
